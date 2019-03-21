@@ -134,10 +134,13 @@ test('changes to fragments are indicated in the owner record\'s `changedAttribut
 
     return store.find('person', 1).then(person => {
       let name = person.get('name');
+      const expectedChanges = [];
 
+      expectedChanges.push(name);
       name.set('last', 'Baratheon');
+      expectedChanges.push(person.get('name'));
 
-      assert.equal(person.changedAttributes().name, true, 'changed fragments are indicated in the diff object');
+      assert.deepEqual(person.changedAttributes().name, expectedChanges, 'changed fragments are indicated in the diff object');
     });
   });
 });
@@ -158,9 +161,13 @@ test('fragment properties that are set to null are indicated in the owner record
     });
 
     return store.find('person', 1).then(person => {
-      person.set('name', null);
+      const expectedChanges = [];
 
-      assert.equal(person.changedAttributes().name, true, 'null fragments are indicated in the diff object');
+      expectedChanges.push(person.get('name'));
+      person.set('name', null);
+      expectedChanges.push(person.get('name'));
+
+      assert.deepEqual(person.changedAttributes().name, expectedChanges, 'null fragments are indicated in the diff object');
     });
   });
 });
